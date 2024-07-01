@@ -47,13 +47,17 @@ const App = () => {
 
   const handleAddMember = (e) => {
     e.preventDefault();
-    if (teamMembers.length < 5 && name) {
+    if (teamMembers.length < 5 && name && !teamMembers.includes(name)) {
       const updatedTeamMembers = [...teamMembers, name];
       setTeamMembers(updatedTeamMembers);
       localStorage.setItem('teamMembers', JSON.stringify(updatedTeamMembers));
       setName('');
     } else {
-      setError("Número máximo de jogadores atingido (5 jogadores) ou nome em branco.");
+      if (teamMembers.includes(name)) {
+        setError("Nome de jogador duplicado. Por favor, escolha um nome diferente.");
+      } else {
+        setError("Número máximo de jogadores atingido (5 jogadores) ou nome em branco.");
+      }
     }
   };
 
@@ -98,11 +102,12 @@ const App = () => {
         minHeight: "100vh",
         textAlign: "center",
         p: 3,
-        backgroundColor: "#f0f0f0"
+        background: "linear-gradient(135deg, #1b2735 0%, #090a0f 100%)",
+        color: "#cdd2d4",
       }}
     >
-      <Typography variant="h4" component="h4" gutterBottom>
-        Clica pra sortear ae garai
+      <Typography variant="h4" component="h4" gutterBottom sx={{ fontWeight: "bold", color: "#f0f0f0" }}>
+        Sorteador de Campeões
       </Typography>
       <Box
         component="form"
@@ -114,7 +119,11 @@ const App = () => {
           mt: 2,
           mb: 3,
           width: "100%",
-          maxWidth: "400px"
+          maxWidth: "400px",
+          background: "#2c3e50",
+          p: 3,
+          borderRadius: "8px",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
         }}
         onSubmit={handleAddMember}
         noValidate
@@ -128,12 +137,30 @@ const App = () => {
           onChange={(e) => setName(e.target.value)}
           fullWidth
           required
+          sx={{
+            backgroundColor: "#3b4a5a",
+            borderRadius: "4px",
+            '& .MuiInputBase-root': {
+              color: "#fff"
+            },
+            '& .MuiFormLabel-root': {
+              color: "#b0bec5"
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: "#62727b"
+            }
+          }}
         />
         <Box sx={{ display: "flex", gap: 1, width: "100%" }}>
           <Button
             variant="contained"
             type="submit"
-            sx={{ flexGrow: 1 }}
+            sx={{
+              flexGrow: 1,
+              backgroundColor: "#3498db",
+              color: "#fff",
+              '&:hover': { backgroundColor: "#2980b9" },
+            }}
             disabled={teamMembers.length >= 5 || !name}
           >
             {loading ? <CircularProgress size={24} /> : "Adicionar"}
@@ -141,7 +168,12 @@ const App = () => {
           <Button
             variant="contained"
             onClick={handleRandomizeChampions}
-            sx={{ flexGrow: 1 }}
+            sx={{
+              flexGrow: 1,
+              backgroundColor: "#e67e22",
+              color: "#fff",
+              '&:hover': { backgroundColor: "#d35400" },
+            }}
             disabled={teamMembers.length === 0}
           >
             {loading ? <CircularProgress size={24} /> : "Sortear"}
@@ -156,7 +188,7 @@ const App = () => {
       <Box sx={{ mt: 2, mb: 3 }}>
         {teamMembers.length > 0 && (
           <>
-            <Typography variant="h6">Jogadores adicionados:</Typography>
+            <Typography variant="h6" sx={{ color: "#ecf0f1" }}>Jogadores adicionados:</Typography>
             <Box sx={{
               display: "flex",
               flexWrap: "wrap",
@@ -169,7 +201,7 @@ const App = () => {
                   key={index}
                   label={member}
                   onDelete={() => handleRemovePlayer(member)}
-                  sx={{ m: 0.5 }}
+                  sx={{ m: 0.5, backgroundColor: "#34495e", color: "#ecf0f1" }}
                 />
               ))}
             </Box>
@@ -179,7 +211,7 @@ const App = () => {
       <Box sx={{ mt: 2 }}>
         {Object.keys(selectedChampions).length > 0 && (
           <>
-            <Typography variant="h6" gutterBottom>Campeões Sorteados:</Typography>
+            <Typography variant="h6" gutterBottom sx={{ color: "#ecf0f1" }}>Campeões Sorteados:</Typography>
             <Box sx={{
               display: "flex",
               flexWrap: "wrap",
@@ -188,10 +220,26 @@ const App = () => {
               mt: 1
             }}>
               {Object.entries(selectedChampions).map(([player, champion], index) => (
-                <Card key={index} sx={{ width: "200px", textAlign: "left" }}>
-                  <CardHeader title={player} titleTypographyProps={{ variant: "body1" }} />
+                <Card
+                  key={index}
+                  sx={{
+                    width: "180px",
+                    textAlign: "center",
+                    backgroundColor: "#34495e",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                    transition: "transform 0.2s",
+                    '&:hover': {
+                      transform: "scale(1.05)",
+                    },
+                  }}
+                >
+                  <CardHeader
+                    title={player}
+                    titleTypographyProps={{ variant: "body1", color: "#ecf0f1" }}
+                  />
                   <CardContent>
-                    <Typography variant="h6">{champion}</Typography>
+                    <Typography variant="h6" sx={{ color: "#ecf0f1" }}>{champion}</Typography>
                   </CardContent>
                 </Card>
               ))}
