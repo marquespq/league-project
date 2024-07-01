@@ -9,8 +9,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: yarn install
       - name: Build
         run: yarn build
+      - name: Clear Yarn Cache
+        run: yarn cache clean
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
